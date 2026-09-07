@@ -15,11 +15,13 @@ class ViewIdGenerator @Inject constructor() {
     val takenIds: Set<Int> = usedViewIds
 
     /**
-     * Claim the [id] as taken so that it cannot be generated.
+     * Claim the [ids] as taken so that they cannot be generated.
      */
-    fun claimViewId(id: Int) {
-        require(!usedViewIds.contains(id)) { "Id [$id] already claimed!" }
-        usedViewIds.add(id)
+    fun claimViewIds(ids: List<Int>) {
+        ids.forEach { id ->
+            require(!usedViewIds.contains(id)) { "Id [$id] already claimed!" }
+            usedViewIds.add(id)
+        }
     }
 
     fun releaseViewId(id: Int) {

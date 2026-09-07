@@ -76,10 +76,7 @@ class TabsRepository @Inject constructor(
     }
 
     private fun TabInitializer.tabId(): Int = if (this is FreezableInitializer) {
-        val frozenId = this.id.takeIf { it != -1 }?.also {
-            viewIdGenerator.claimViewId(it)
-        } ?: viewIdGenerator.generateViewId()
-        frozenId
+        this.id.takeIf { it != -1 } ?: viewIdGenerator.generateViewId()
     } else {
         viewIdGenerator.generateViewId()
     }
@@ -131,15 +128,17 @@ class TabsRepository @Inject constructor(
 
     override suspend fun initializeTabs(): List<TabModel> =
         withContext(coroutineDispatchers.default) {
-            val oldTabsDeferred = bundleStore.retrieve().map {
-                async {
-                    createTabUnsafe(
-                        tabInitializer = it,
-                        tabType = TabModel.Type.NORMAL,
-                        emitUpdate = false
-                    )
+            val oldTabsDeferred = bundleStore.retrieve()
+                .also { initializers -> viewIdGenerator.claimViewIds(initializers.map { it.id }) }
+                .map {
+                    async {
+                        createTabUnsafe(
+                            tabInitializer = it,
+                            tabType = TabModel.Type.NORMAL,
+                            emitUpdate = false
+                        )
+                    }
                 }
-            }
 
             val initialUrl = when (initialAction) {
                 is BrowserContract.Action.LoadUrl -> initialAction.url
