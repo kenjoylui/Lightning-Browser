@@ -7,7 +7,6 @@ import acr.browser.lightning.browser.tab.DownloadPageInitializer
 import acr.browser.lightning.browser.tab.FreezableInitializer
 import acr.browser.lightning.browser.tab.HistoryPageInitializer
 import acr.browser.lightning.browser.tab.HomePageInitializer
-import acr.browser.lightning.browser.tab.TabInitializer
 import acr.browser.lightning.browser.tab.TabModel
 import acr.browser.lightning.browser.tab.bundle.storage.BundleWriter
 import acr.browser.lightning.utils.isBookmarkUrl
@@ -51,7 +50,7 @@ class DefaultBundleStore @Inject constructor(
         bundleWriter.writeToStorage(outState)
     }
 
-    override suspend fun retrieve(): List<TabInitializer> =
+    override suspend fun retrieve(): List<FreezableInitializer> =
         bundleWriter.readFromStorage()?.let { bundle ->
             bundle.keySet()
                 .filter { it.startsWith(BUNDLE_KEY) }
@@ -79,7 +78,7 @@ class DefaultBundleStore @Inject constructor(
                 bundle = bundle,
                 delegate = delegate,
                 initialTitle = title ?: application.getString(R.string.tab_frozen),
-                id = id
+                id = id,
             )
         } ?: emptyList()
 

@@ -1,6 +1,6 @@
 package acr.browser.lightning.browser.tab.bundle
 
-import acr.browser.lightning.browser.tab.TabInitializer
+import acr.browser.lightning.browser.tab.FreezableInitializer
 import acr.browser.lightning.browser.tab.TabModel
 
 /**
@@ -16,7 +16,7 @@ interface BundleStore {
     /**
      * Synchronously previously stored tab data.
      */
-    suspend fun retrieve(): List<TabInitializer>
+    suspend fun retrieve(): List<FreezableInitializer>
 
     /**
      * Synchronously delete all stored tabs.
